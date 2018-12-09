@@ -19,8 +19,8 @@
 #define PORT_ALT_2		2
 #define UART_CLK_PLL	1
 
-#define TX_BUFFER_SIZE	1024
-#define RX_BUFFER_SIZE	256
+#define TX_BUFFER_SIZE	128
+#define RX_BUFFER_SIZE	1
 
 extern bool rx_overrun;
 
@@ -38,6 +38,11 @@ bool tx_nonblocking(char data);
 
 /* check if a character is ready to be received it, and grab it if so */
 bool rx_nonblocking(char * data);
+
+/* transmits a string via TX buffer, will block if the buffer is full */
+/* the array size is the size of the *data array, not necessarily the number of elements */
+/* the *data array should be null terminated */
+void tx_string(char * data, uint8_t array_size);
 
 /* function called by the UART0 ISR for tx */
 void isr_tx(void);

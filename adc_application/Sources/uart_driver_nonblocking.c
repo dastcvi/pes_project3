@@ -116,6 +116,21 @@ bool rx_nonblocking(char * data)
 	return available;
 }
 
+/* transmits a string via TX buffer, will block if the buffer is full */
+/* the array size is the size of the *data array, not necessarily the number of elements */
+/* the *data array should be null terminated */
+void tx_string(char * data, uint8_t array_size)
+{
+	uint8_t index = 0;
+
+	while (array_size-- > 0 && data[index] != '\0')
+	{
+		/* block until the TX buffer takes the char */
+		while (!tx_nonblocking(data[index]));
+		index++;
+	}
+}
+
 /* function called by the UART0 ISR for tx */
 void isr_tx(void)
 {

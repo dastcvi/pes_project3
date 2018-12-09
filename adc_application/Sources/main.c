@@ -10,7 +10,10 @@
  */
 
 #include "uart_driver_nonblocking.h"
+#include "adc_driver.h"
 #include "MKL25Z4.h"
+#include <stdint.h>
+#include <stdio.h>
 
 #define RED_LED_PINB		18	/* red LED is on PB18 */
 
@@ -38,17 +41,18 @@ void red_led_toggle(void)
 
 int main(void)
 {
-	init_uart_nonblocking();
+	char adc_string[16] = "";
+	int16_t adc_result = 0;
+
 	red_led_init();
+	init_uart_nonblocking();
+	init_adc();
 
 	while (1)
 	{
-		if (rx_nonblocking(&user_char))
-		{
-			tx_nonblocking(user_char);
-			red_led_toggle();
-		}
-
+		adc_result = read_adc_blocking();
+		sprintf(adc_string, "%d\n\r", adc_result);
+		tx_string(adc_string, 16);
 	}
 
     return 0;
