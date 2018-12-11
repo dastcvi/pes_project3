@@ -18,6 +18,8 @@
 #define DMA_SIZE_16         2
 #define DMA_BUFFER_128      4
 
-void init_dma(void);
+#define RED_LED_PINB		18	/* red LED is on PB18 */
+
+void init_dma(bool irq);
 
 #endif /* DMA_DRIVER_H */

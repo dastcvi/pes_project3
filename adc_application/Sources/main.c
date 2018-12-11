@@ -18,8 +18,8 @@
 
 /* choose a run configuration */
 //#define PART_2_ADC
-#define PART_3_DMA
-//#define PART_4_IRQ
+//#define PART_3_DMA
+#define PART_4_IRQ
 //#define PART_5_APP
 
 #define RED_LED_PINB		18	/* red LED is on PB18 */
@@ -37,8 +37,8 @@ void red_led_init(void)
 	/* set as output */
 	GPIOB->PDDR |= (uint32_t) 1 << RED_LED_PINB;
 
-	/* start low (LED on) */
-	GPIOB->PCOR |= (uint32_t) 1 << RED_LED_PINB;
+	/* start high (LED off) */
+	GPIOB->PSOR |= (uint32_t) 1 << RED_LED_PINB;
 }
 
 void red_led_toggle(void)
@@ -65,7 +65,14 @@ int main(void)
 #endif
 
 #ifdef PART_3_DMA
-	init_dma();
+	init_dma(false);
+	init_adc(true);
+
+	while(1);
+#endif
+
+#ifdef PART_4_IRQ
+	init_dma(true);
 	init_adc(true);
 
 	while(1);

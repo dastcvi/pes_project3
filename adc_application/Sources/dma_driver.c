@@ -36,7 +36,7 @@ static void alloc_buffer(void)
 	}
 }
 
-void init_dma(void)
+void init_dma(bool irq)
 {
 	alloc_buffer();
 
@@ -55,6 +55,13 @@ void init_dma(void)
 	/* set up for 64 sample (128 byte) transfers */
 	DMA0->DMA[0].DSR_BCR |= 128;
 
+	if (irq) {
+		DMA0->DMA[0].DCR |= DMA_DCR_EINT_MASK;
+
+		/* enable the general DMA0 IRQ */
+		NVIC_EnableIRQ(DMA0_IRQn);
+	}
+
 	/* enable DMA CH0 controls */
 	DMA0->DMA[0].DCR |= ((uint32_t) DMA_SIZE_16 << DMA_DCR_SSIZE_SHIFT)   /* source 16 bits */
 			         |  ((uint32_t) DMA_SIZE_16 << DMA_DCR_DSIZE_SHIFT)   /* destination 16 bits */
@@ -67,4 +74,23 @@ void init_dma(void)
 	/* set DMAMUX for ADC0 to CH0 and enable */
 	DMAMUX0->CHCFG[0] |= DMAMUX_CHCFG_ENBL_MASK
 			          |  ADC0_DMA_SOURCE;
+}
+
+void DMA0_IRQHandler(void)
+{
+	/* turn LED on */
+	GPIOB->PCOR |= (uint32_t) 1 << RED_LED_PINB;
+
+	/* clear the flags */
+	DMA0->DMA[0].DSR_BCR |= DMA_DSR_BCR_DONE_MASK;
+
+	/* reset for 64 sample (128 byte) transfers */
+	DMA0->DMA[0].DSR_BCR |= 128;
+
+	/* reenable peripheral requests */
+	DMA0->DMA[0].DCR |= DMA_DCR_ERQ_MASK;
+
+	/* turn LED off */
+	GPIOB->PSOR |= (uint32_t) 1 << RED_LED_PINB;
+
 }
