@@ -11,9 +11,16 @@
 
 #include "uart_driver_nonblocking.h"
 #include "adc_driver.h"
+#include "dma_driver.h"
 #include "MKL25Z4.h"
 #include <stdint.h>
 #include <stdio.h>
+
+/* choose a run configuration */
+//#define PART_2_ADC
+#define PART_3_DMA
+//#define PART_4_IRQ
+//#define PART_5_APP
 
 #define RED_LED_PINB		18	/* red LED is on PB18 */
 
@@ -41,12 +48,13 @@ void red_led_toggle(void)
 
 int main(void)
 {
+ 	red_led_init();
+	init_uart_nonblocking();
+
+#ifdef PART_2_ADC
 	char adc_string[16] = "";
 	int16_t adc_result = 0;
-
-	red_led_init();
-	init_uart_nonblocking();
-	init_adc();
+	init_adc(false);
 
 	while (1)
 	{
@@ -54,6 +62,14 @@ int main(void)
 		sprintf(adc_string, "%d\n\r", adc_result);
 		tx_string(adc_string, 16);
 	}
+#endif
+
+#ifdef PART_3_DMA
+	init_dma();
+	init_adc(true);
+
+	while(1);
+#endif
 
     return 0;
 }

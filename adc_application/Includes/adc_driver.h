@@ -26,7 +26,7 @@
  * ConversionTime = 32 * 54 * ADCK cycles = 72 us
  * ConversionFrequency = 1 / 72 us ~= 13.9 kHz > 8 kHz minimum
  */
-void init_adc(void);
+void init_adc(bool dma_enable);
 
 int16_t read_adc_blocking(void);
 

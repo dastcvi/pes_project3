@@ -23,7 +23,7 @@
  * ConversionTime = 32 * 54 * ADCK cycles = 72 us
  * ConversionFrequency = 1 / 72 us ~= 13.9 kHz > 8 kHz minimum
  */
-void init_adc(void)
+void init_adc(bool dma_enable)
 {
 	/* Enable PORT E clock */
 	SIM->SCGC5 |= (uint32_t) SIM_SCGC5_PORTE_MASK;
@@ -43,6 +43,9 @@ void init_adc(void)
 
 	/* CFG2, note defaults to LSTAdded = 20 */
 	/* SC2, note defaults to, DMA disabled, compare disabled, software trigger, external reference pins */
+	if (dma_enable) {
+		ADC0->SC2 |= ADC_SC2_DMAEN_MASK;  /* enable dma requests */
+	}
 
 	/* SC3 */
 	ADC0->SC3 |= ADC_SC3_ADCO_MASK        /* enable continuous mode */
