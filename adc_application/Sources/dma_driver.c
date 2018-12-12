@@ -13,6 +13,7 @@
 #include <stdlib.h>
 
 volatile uint16_t * adc_buffer = NULL;
+volatile bool new_data = false;
 
 static void alloc_buffer(void);
 
@@ -89,6 +90,9 @@ void DMA0_IRQHandler(void)
 
 	/* reenable peripheral requests */
 	DMA0->DMA[0].DCR |= DMA_DCR_ERQ_MASK;
+
+	/* update the global flag */
+	new_data = true;
 
 	/* turn LED off */
 	GPIOB->PSOR |= (uint32_t) 1 << RED_LED_PINB;

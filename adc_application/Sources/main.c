@@ -12,6 +12,7 @@
 #include "uart_driver_nonblocking.h"
 #include "adc_driver.h"
 #include "dma_driver.h"
+#include "adc_application.h"
 #include "MKL25Z4.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -19,8 +20,8 @@
 /* choose a run configuration */
 //#define PART_2_ADC
 //#define PART_3_DMA
-#define PART_4_IRQ
-//#define PART_5_APP
+//#define PART_4_IRQ
+#define PART_5_APP
 
 #define RED_LED_PINB		18	/* red LED is on PB18 */
 
@@ -76,6 +77,22 @@ int main(void)
 	init_adc(true);
 
 	while(1);
+#endif
+
+#ifdef PART_5_APP
+	init_dma(true);
+	init_adc(true);
+	char adc_string[16] = "";
+	uint16_t peak = 0;
+
+	while (1)
+	{
+		while (!new_data);
+
+		peak = peak_monitor();
+		sprintf(adc_string, "%d\n\r", peak);
+		tx_string(adc_string, 16);
+	}
 #endif
 
     return 0;

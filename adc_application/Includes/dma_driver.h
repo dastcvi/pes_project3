@@ -20,6 +20,9 @@
 
 #define RED_LED_PINB		18	/* red LED is on PB18 */
 
+extern volatile uint16_t * adc_buffer;
+extern volatile bool new_data;
+
 void init_dma(bool irq);
 
 #endif /* DMA_DRIVER_H */
